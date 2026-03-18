@@ -48,6 +48,7 @@ struct AddTransactionSheet: View {
             whoPaid: whoPaid
         )
         modelContext.insert(transaction)
+        try? modelContext.save()
         dismiss()
     }
 }

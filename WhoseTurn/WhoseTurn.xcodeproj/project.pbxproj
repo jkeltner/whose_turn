@@ -17,6 +17,7 @@
 		A10000070000000000000007 /* AddTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000070000000000000007 /* AddTransactionView.swift */; };
 		A10000080000000000000008 /* TransactionHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000080000000000000008 /* TransactionHistoryView.swift */; };
 		A10000090000000000000009 /* FriendDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000090000000000000009 /* FriendDetailView.swift */; };
+		A10000100000000000000010 /* PhotoCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000100000000000000010 /* PhotoCropView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		A20000070000000000000007 /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
 		A20000080000000000000008 /* TransactionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHistoryView.swift; sourceTree = "<group>"; };
 		A20000090000000000000009 /* FriendDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendDetailView.swift; sourceTree = "<group>"; };
+		A20000100000000000000010 /* PhotoCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCropView.swift; sourceTree = "<group>"; };
 		A30000010000000000000001 /* WhoseTurn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoseTurn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -71,6 +73,7 @@
 				A20000070000000000000007 /* AddTransactionView.swift */,
 				A20000080000000000000008 /* TransactionHistoryView.swift */,
 				A20000090000000000000009 /* FriendDetailView.swift */,
+				A20000100000000000000010 /* PhotoCropView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -155,6 +158,7 @@
 				A10000070000000000000007 /* AddTransactionView.swift in Sources */,
 				A10000080000000000000008 /* TransactionHistoryView.swift in Sources */,
 				A10000090000000000000009 /* FriendDetailView.swift in Sources */,
+				A10000100000000000000010 /* PhotoCropView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,7 +170,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = PTPT4QFVHU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Whose Turn";
@@ -194,7 +198,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = PTPT4QFVHU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Whose Turn";
