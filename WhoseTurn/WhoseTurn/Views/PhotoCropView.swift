@@ -12,11 +12,15 @@ struct PhotoCropView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var offset: CGSize = .zero
+    @State private var scale: CGFloat = 1.0
     @GestureState private var dragOffset: CGSize = .zero
+    @GestureState private var pinchScale: CGFloat = 1.0
 
     private let cropSize: CGFloat = UIScreen.main.bounds.width * 0.8
 
     private var uiImage: UIImage? { UIImage(data: imageData) }
+
+    private var currentScale: CGFloat { scale * pinchScale }
 
     private var currentOffset: CGSize {
         CGSize(
@@ -31,46 +35,61 @@ struct PhotoCropView: View {
                 Color.black.ignoresSafeArea()
 
                 if let uiImage {
-                    let sizes = fillSizes(for: uiImage)
+                    let baseSize = fillSizes(for: uiImage)
+                    let w = baseSize.width * currentScale
+                    let h = baseSize.height * currentScale
 
+                    // Dimmed full image
                     Image(uiImage: uiImage)
                         .resizable()
-                        .frame(width: sizes.width, height: sizes.height)
+                        .frame(width: w, height: h)
                         .offset(currentOffset)
+                        .opacity(0.4)
+                        .allowsHitTesting(false)
+
+                    // Bright image clipped to crop circle
+                    ZStack {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .frame(width: w, height: h)
+                            .offset(currentOffset)
+                    }
+                    .frame(width: cropSize, height: cropSize)
+                    .clipShape(Circle())
+                    .allowsHitTesting(false)
+
+                    Circle()
+                        .stroke(Color.white.opacity(0.7), lineWidth: 1)
+                        .frame(width: cropSize, height: cropSize)
+                        .allowsHitTesting(false)
+
+                    // Gesture capture layer
+                    Color.clear
+                        .contentShape(Rectangle())
                         .gesture(
                             DragGesture()
                                 .updating($dragOffset) { value, state, _ in
                                     state = value.translation
                                 }
                                 .onEnded { value in
-                                    let maxX = max(0, (sizes.width - cropSize) / 2)
-                                    let maxY = max(0, (sizes.height - cropSize) / 2)
+                                    let maxX = max(0, (w - cropSize) / 2)
+                                    let maxY = max(0, (h - cropSize) / 2)
                                     offset = CGSize(
                                         width: clamp(offset.width + value.translation.width, -maxX, maxX),
                                         height: clamp(offset.height + value.translation.height, -maxY, maxY)
                                     )
                                 }
                         )
+                        .simultaneousGesture(
+                            MagnifyGesture()
+                                .updating($pinchScale) { value, state, _ in
+                                    state = value.magnification
+                                }
+                                .onEnded { value in
+                                    scale = max(1.0, scale * value.magnification)
+                                }
+                        )
                 }
-
-                Rectangle()
-                    .fill(Color.black.opacity(0.5))
-                    .mask {
-                        ZStack {
-                            Rectangle()
-                            Circle()
-                                .frame(width: cropSize, height: cropSize)
-                                .blendMode(.destinationOut)
-                        }
-                        .compositingGroup()
-                    }
-                    .allowsHitTesting(false)
-                    .ignoresSafeArea()
-
-                Circle()
-                    .stroke(Color.white.opacity(0.7), lineWidth: 1)
-                    .frame(width: cropSize, height: cropSize)
-                    .allowsHitTesting(false)
             }
             .navigationTitle("Crop Photo")
             .navigationBarTitleDisplayMode(.inline)
@@ -107,28 +126,30 @@ struct PhotoCropView: View {
             return
         }
 
-        let sizes = fillSizes(for: uiImage)
-        let scale = uiImage.size.width / sizes.width
+        let baseSize = fillSizes(for: uiImage)
+        let displayW = baseSize.width * scale
+        let pixelsPerPoint = uiImage.size.width / displayW
 
-        let pixelOffsetX = -offset.width * scale
-        let pixelOffsetY = -offset.height * scale
-        let cropPixels = cropSize * scale
+        let pixelOffsetX = -offset.width * pixelsPerPoint
+        let pixelOffsetY = -offset.height * pixelsPerPoint
+        let cropPixels = cropSize * pixelsPerPoint
 
         let originX = (uiImage.size.width - cropPixels) / 2 + pixelOffsetX
         let originY = (uiImage.size.height - cropPixels) / 2 + pixelOffsetY
-        let cropRect = CGRect(x: originX, y: originY, width: cropPixels, height: cropPixels)
-
-        guard let cgImage = uiImage.cgImage?.cropping(to: cropRect) else {
-            dismiss()
-            return
-        }
 
         let outputSize: CGFloat = 500
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1.0
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: outputSize, height: outputSize), format: format)
+
         let final = renderer.image { _ in
-            UIImage(cgImage: cgImage).draw(in: CGRect(x: 0, y: 0, width: outputSize, height: outputSize))
+            // Draw the full image positioned so the crop region maps to the output
+            let drawScale = outputSize / cropPixels
+            let drawX = -(originX * drawScale)
+            let drawY = -(originY * drawScale)
+            let drawW = uiImage.size.width * drawScale
+            let drawH = uiImage.size.height * drawScale
+            uiImage.draw(in: CGRect(x: drawX, y: drawY, width: drawW, height: drawH))
         }
 
         if let data = final.jpegData(compressionQuality: 0.85) {
