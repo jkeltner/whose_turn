@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 import UIKit
 
 struct CropImageData: Identifiable {
@@ -8,17 +9,19 @@ struct CropImageData: Identifiable {
 
 struct PhotoCropView: View {
     let imageData: Data
-    let onCrop: (Data) -> Void
+    let onCrop: (_ rawData: Data, _ croppedData: Data) -> Void
     @Environment(\.dismiss) private var dismiss
 
+    @State private var currentImageData: Data
     @State private var offset: CGSize = .zero
     @State private var scale: CGFloat = 1.0
+    @State private var selectedPhoto: PhotosPickerItem?
     @GestureState private var dragOffset: CGSize = .zero
     @GestureState private var pinchScale: CGFloat = 1.0
 
     private let cropSize: CGFloat = UIScreen.main.bounds.width * 0.8
 
-    private var uiImage: UIImage? { UIImage(data: imageData) }
+    private var uiImage: UIImage? { UIImage(data: currentImageData) }
 
     private var currentScale: CGFloat { scale * pinchScale }
 
@@ -27,6 +30,12 @@ struct PhotoCropView: View {
             width: offset.width + dragOffset.width,
             height: offset.height + dragOffset.height
         )
+    }
+
+    init(imageData: Data, onCrop: @escaping (_ rawData: Data, _ croppedData: Data) -> Void) {
+        self.imageData = imageData
+        self.onCrop = onCrop
+        self._currentImageData = State(initialValue: imageData)
     }
 
     var body: some View {
@@ -103,6 +112,23 @@ struct PhotoCropView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { cropAndSave() }
                 }
+                ToolbarItem(placement: .bottomBar) {
+                    PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                        Label("Choose a New Photo", systemImage: "photo")
+                            .foregroundStyle(.white)
+                    }
+                }
+            }
+            .toolbarBackground(.visible, for: .bottomBar)
+            .toolbarBackground(Color.black, for: .bottomBar)
+            .onChange(of: selectedPhoto) { _, newValue in
+                Task {
+                    if let data = try? await newValue?.loadTransferable(type: Data.self) {
+                        currentImageData = data
+                        offset = .zero
+                        scale = 1.0
+                    }
+                }
             }
         }
     }
@@ -143,7 +169,6 @@ struct PhotoCropView: View {
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: outputSize, height: outputSize), format: format)
 
         let final = renderer.image { _ in
-            // Draw the full image positioned so the crop region maps to the output
             let drawScale = outputSize / cropPixels
             let drawX = -(originX * drawScale)
             let drawY = -(originY * drawScale)
@@ -153,7 +178,7 @@ struct PhotoCropView: View {
         }
 
         if let data = final.jpegData(compressionQuality: 0.85) {
-            onCrop(data)
+            onCrop(currentImageData, data)
         }
         dismiss()
     }

@@ -8,6 +8,7 @@ struct AddFriendView: View {
     @State private var name = ""
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var photoData: Data?
+    @State private var rawPhotoData: Data?
     @State private var cropImageData: CropImageData?
 
     var body: some View {
@@ -35,7 +36,8 @@ struct AddFriendView: View {
                 }
             }
             .fullScreenCover(item: $cropImageData) { item in
-                PhotoCropView(imageData: item.data) { croppedData in
+                PhotoCropView(imageData: item.data) { rawData, croppedData in
+                    rawPhotoData = rawData
                     photoData = croppedData
                 }
             }
@@ -43,18 +45,24 @@ struct AddFriendView: View {
     }
 
     private var photoSection: some View {
-        PhotosPicker(selection: $selectedPhoto, matching: .images) {
+        VStack {
             if let photoData, let uiImage = UIImage(data: photoData) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 100, height: 100)
-                    .clipShape(Circle())
+                Button {
+                    cropImageData = CropImageData(data: rawPhotoData ?? photoData)
+                } label: {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 100, height: 100)
+                        .clipShape(Circle())
+                }
             } else {
-                Image(systemName: "person.circle.fill")
-                    .resizable()
-                    .frame(width: 100, height: 100)
-                    .foregroundStyle(.gray.opacity(0.3))
+                PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                    Image(systemName: "person.circle.fill")
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .foregroundStyle(.gray.opacity(0.3))
+                }
             }
         }
         .onChange(of: selectedPhoto) { _, newValue in
