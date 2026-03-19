@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A1000000000000000000000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* Assets.xcassets */; };
+		A10000110000000000000011 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A20000110000000000000011 /* PrivacyInfo.xcprivacy */; };
 		A10000010000000000000001 /* WhoseTurnApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000001 /* WhoseTurnApp.swift */; };
 		A10000020000000000000002 /* Friend.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000020000000000000002 /* Friend.swift */; };
 		A10000030000000000000003 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000030000000000000003 /* Transaction.swift */; };
@@ -32,6 +33,7 @@
 		A20000080000000000000008 /* TransactionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHistoryView.swift; sourceTree = "<group>"; };
 		A20000090000000000000009 /* FriendDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendDetailView.swift; sourceTree = "<group>"; };
 		A20000100000000000000010 /* PhotoCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCropView.swift; sourceTree = "<group>"; };
+		A20000110000000000000011 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A30000010000000000000001 /* WhoseTurn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoseTurn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -51,6 +53,7 @@
 				A40000030000000000000003 /* Models */,
 				A40000040000000000000004 /* Views */,
 				A2000000000000000000000A /* Assets.xcassets */,
+				A20000110000000000000011 /* PrivacyInfo.xcprivacy */,
 			);
 			path = WhoseTurn;
 			sourceTree = "<group>";
@@ -139,6 +142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000000000000000000000A /* Assets.xcassets in Resources */,
+				A10000110000000000000011 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
